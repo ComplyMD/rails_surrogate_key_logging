@@ -2,7 +2,7 @@ require 'active_support/concern'
 
 module SurrogateKeyLogging
   module ActiveRecord
-    module SurrogateAttributes
+    module Attributes
       extend ActiveSupport::Concern
 
       included do

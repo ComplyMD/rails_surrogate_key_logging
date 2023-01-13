@@ -9,6 +9,7 @@ module SurrogateKeyLogging
   autoload :Railtie
   autoload :Version
   autoload :ActionController
+  autoload :ActionDispatch
   autoload :ActiveSupport
   autoload :ActiveRecord
   autoload :KeyManager
@@ -39,27 +40,6 @@ module SurrogateKeyLogging
       parameter_filter.filter params
     end
 
-    def initialize
-      initialize_filter_parameters
-      initialize_logs
-      initialize_middleware
-    end
-
-    def initialize_filter_parameters
-    end
-
-    def initialize_logs
-      ::ActiveRecord::LogSubscriber.detach_from(:active_record)
-      ::SurrogateKeyLogging::ActiveRecord::LogSubscriber.attach_to(:active_record)
-      ::ActiveSupport::LogSubscriber.detach_from(:action_controller)
-      ::SurrogateKeyLogging::ActionController::LogSubscriber.attach_to(:action_controller)
-      ::ActionDispatch::Request.send(:include, SurrogateKeyLogging::ActionDispatch::Request)
-    end
-
-    def initialize_middleware
-      Rails.application.config.middleware.insert_before 0, Middleware
-    end
-
     def add_param_to_filter(attr, parent = nil)
       if parent.nil?
         surrogate_attributes attr.to_s
@@ -75,3 +55,5 @@ module SurrogateKeyLogging
   end
 
 end
+
+require 'surrogate_key_logging/railtie'

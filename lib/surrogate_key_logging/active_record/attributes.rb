@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'active_support/concern'
 
 module SurrogateKeyLogging
@@ -20,7 +22,7 @@ module SurrogateKeyLogging
           end
           @surrogate_parent_names
         end
-  
+
         def surrogate_attributes(*attrs)
           @surrogate_attributes ||= []
           attrs.each do |attr|

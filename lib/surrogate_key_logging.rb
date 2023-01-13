@@ -16,6 +16,7 @@ module SurrogateKeyLogging
   autoload :Middleware
 
   class << self
+
     def surrogate_attributes(*attrs)
       @surrogate_attributes ||= []
       attrs.each do |attr|
@@ -45,9 +46,9 @@ module SurrogateKeyLogging
         surrogate_attributes attr.to_s
       else
         surrogate_attributes(
-          "#{parent.to_s}.#{attr.to_s}",
-          "#{parent.to_s}[#{attr.to_s}]",
-          "[#{parent.to_s}][#{attr.to_s}]",
+          "#{parent}.#{attr}",
+          "#{parent}[#{attr}]",
+          "[#{parent}][#{attr}]"
         )
       end
     end

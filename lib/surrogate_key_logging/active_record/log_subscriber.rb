@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 module SurrogateKeyLogging
   module ActiveRecord
     class LogSubscriber < ::ActiveRecord::LogSubscriber
-      def sql(event)
+
+      def sql(event) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
         self.class.runtime += event.duration
         return unless logger.debug?
 
@@ -16,10 +19,8 @@ module SurrogateKeyLogging
 
         name_match = /([A-Za-z]+) (Load|Update|Cache)/.match(payload[:name])
         model = if name_match && name_match[1] && ::ActiveRecord::Base.descendants.map(&:to_s).include?(name_match[1])
-          name_match[1].safe_constantize
-        else
-          nil
-        end
+                  name_match[1].safe_constantize
+                end
 
         if payload[:binds]&.any?
           casted_params = type_casted_binds(payload[:type_casted_binds])
@@ -29,7 +30,7 @@ module SurrogateKeyLogging
             binds << render_bind(attr, casted_params[i], payload, model)
           end
           binds = binds.inspect
-          binds.prepend("  ")
+          binds.prepend('  ')
         end
 
         name = colorize_payload_name(name, payload[:name])
@@ -48,12 +49,10 @@ module SurrogateKeyLogging
           casted_binds.respond_to?(:call) ? casted_binds.call : casted_binds
         end
 
-        def render_bind(attr, value, payload, model)
+        def render_bind(attr, value, _payload, model) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           case attr
           when ActiveModel::Attribute
-            if attr.type.binary? && attr.value
-              value = "<#{attr.value_for_database.to_s.bytesize} bytes of binary data>"
-            end
+            value = "<#{attr.value_for_database.to_s.bytesize} bytes of binary data>" if attr.type.binary? && attr.value
           when Array
             attr = attr.first
           else
@@ -64,10 +63,11 @@ module SurrogateKeyLogging
           if model && attr_name && model.respond_to?(:surrogate_attributes) && model.surrogate_attributes.include?(attr_name.to_sym)
             value = SurrogateKeyLogging.key_manager.call(attr_name, value, model.to_s.underscore)
           elsif attr_name
-            value = basic_parameter_filter.filter( attr_name => value )[attr_name]
+            value = basic_parameter_filter.filter(attr_name => value)[attr_name]
           end
           [attr_name, value]
         end
+
     end
   end
 end

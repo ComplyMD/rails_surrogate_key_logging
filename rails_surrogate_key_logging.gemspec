@@ -21,14 +21,14 @@ Gem::Specification.new do |s|
     'rubygems_mfa_required' => 'true',
   }
 
-  s.files = Dir['lib/**/*','README.md','MIT-LICENSE','rails_surrogate_key_logging.gemspec']
+  s.files = Dir['lib/**/*', 'README.md', 'MIT-LICENSE', 'rails_surrogate_key_logging.gemspec']
 
   s.require_paths = %w[ lib ]
 
   s.required_ruby_version = '>= 2.7.0'
 
-  s.add_dependency('activesupport', '>= 6.0.0')
-  s.add_dependency('activerecord', '>= 6.0.0')
   s.add_dependency('actionpack', '>= 6.0.0')
+  s.add_dependency('activerecord', '>= 6.0.0')
+  s.add_dependency('activesupport', '>= 6.0.0')
   s.add_dependency('railties', '>= 6.0.0')
 end

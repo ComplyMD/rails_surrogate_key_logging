@@ -6,16 +6,27 @@ require 'active_support'
 module SurrogateKeyLogging
   extend ActiveSupport::Autoload
 
-  autoload :Railtie
-  autoload :Version
   autoload :ActionController
   autoload :ActionDispatch
   autoload :ActiveSupport
   autoload :ActiveRecord
+  autoload :Config, 'surrogate_key_logging/configuration'
+  autoload :Configuration
   autoload :KeyManager
+  autoload :KeyStore
   autoload :Middleware
+  autoload :Railtie
+  autoload :Version
+
+  @config = Config.new
 
   class << self
+
+    attr_reader :config
+
+    def configure
+      yield config
+    end
 
     def surrogate_attributes(*attrs)
       @surrogate_attributes ||= []
@@ -26,6 +37,10 @@ module SurrogateKeyLogging
     end
 
     def reset
+      reset! if config.cache
+    end
+    
+    def reset!
       @key_manager = @parameter_filter = nil
     end
 
@@ -35,6 +50,10 @@ module SurrogateKeyLogging
 
     def parameter_filter
       @parameter_filter ||= ::ActiveSupport::ParameterFilter.new(surrogate_attributes, mask: key_manager)
+    end
+
+    def key_store
+      @key_store ||= KeyStore.get(config.key_store).new
     end
 
     def filter_parameters(params)
@@ -55,6 +74,8 @@ module SurrogateKeyLogging
 
   end
 
-end
+  KeyStore.eager_load!
+  ::Rails::Application::Configuration.send(:include, Configuration)
+  require 'surrogate_key_logging/railtie'
 
-require 'surrogate_key_logging/railtie'
+end

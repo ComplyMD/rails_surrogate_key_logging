@@ -4,7 +4,7 @@ require 'active_support/parameter_filter'
 
 # Add ability for @mask to be a class/instance/lambda/proc
 module ActiveSupport
-  module ParameterFilter
+  class ParameterFilter
     class CompiledFilter
 
       def value_for_key(key, value, parents = [], original_params = nil) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity

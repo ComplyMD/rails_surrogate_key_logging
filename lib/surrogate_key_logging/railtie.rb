@@ -1,10 +1,20 @@
 # frozen_string_literal: true
 
 require 'rails'
+require 'securerandom'
 
 module SurrogateKeyLogging
   class Railtie < Rails::Railtie
     railtie_name :surrogate_key_logging
+
+    initializer 'surrogate_key_logging.config' do |app|
+      SurrogateKeyLogging.configure do |config|
+        config.key_prefix = '' unless config.key?(:key_prefix)
+        config.key_for ||= -> (key, value) { "#{config.key_prefix}#{SecureRandom.uuid}" }
+        config.cache = true unless config.key?(:cache)
+        config.cache_key_for ||= -> (key, value) { value }
+      end
+    end
 
     initializer 'surrogate_key_logging.filter_parameters' do
     end

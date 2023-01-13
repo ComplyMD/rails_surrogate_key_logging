@@ -6,7 +6,6 @@ module SurrogateKeyLogging
 
     def initialize(app)
       @app = app
-      puts 'surrogate new'
     end
 
     def call(env)

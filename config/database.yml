@@ -1,0 +1,15 @@
+<%=
+  YAML.load(
+    ERB.new(
+      File.read(
+        Rails.root.join('config', 'database.yml')
+      ),
+      nil, nil, '__dummy_config_database_yml_erbout__'
+    ).result(binding)
+  ).inject({}) do |memo, conf|
+    k, v = conf
+    memo[k.sub(Regexp.new("^surrogate_key_logging_"),'')] = v if k.starts_with?("surrogate_key_logging_")
+
+    memo
+  end.to_yaml
+%>

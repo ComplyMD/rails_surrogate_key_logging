@@ -17,10 +17,11 @@ module SurrogateKeyLogging
         sql   = payload[:sql]
         binds = nil
 
-        name_match = /([A-Za-z]+) (Load|Update|Cache)/.match(payload[:name])
+        name_match = /([A-Za-z:]+) (Load|Create|Update|Cache)/.match(payload[:name])
         model = if name_match && name_match[1] && ::ActiveRecord::Base.descendants.map(&:to_s).include?(name_match[1])
                   name_match[1].safe_constantize
                 end
+        return if !SurrogateKeyLogging.config.debug && SurrogateKeyLogging.key_store.is_a?(SurrogateKeyLogging::KeyStore::ActiveRecord) && SurrogateKeyLogging.key_store.model == model
 
         if payload[:binds]&.any?
           casted_params = type_casted_binds(payload[:type_casted_binds])

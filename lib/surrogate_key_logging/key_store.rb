@@ -6,7 +6,7 @@ module SurrogateKeyLogging
 
     eager_autoload do
       autoload :Base
-      autoload :Redis
+      autoload :ActiveRecord
     end
 
     @map = {}.with_indifferent_access

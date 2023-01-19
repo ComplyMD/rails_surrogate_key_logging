@@ -15,7 +15,7 @@ module SurrogateKeyLogging
   autoload :KeyManager
   autoload :KeyStore
   autoload :Middleware
-  autoload :Railtie
+  autoload :Engine
   autoload :Version
 
   @config = Config.new
@@ -76,6 +76,6 @@ module SurrogateKeyLogging
 
   KeyStore.eager_load!
   ::Rails::Application::Configuration.send(:include, Configuration)
-  require 'surrogate_key_logging/railtie'
+  require 'surrogate_key_logging/engine'
 
 end

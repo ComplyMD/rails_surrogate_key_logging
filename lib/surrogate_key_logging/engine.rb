@@ -18,7 +18,8 @@ module SurrogateKeyLogging
     end
 
     rake_tasks do
-      load 'tasks/key_store/active_record/database.rake'
+      load 'tasks/surrogate_key_logging.rake'
+      load 'tasks/key_store/active_record.rake'
     end
 
     initializer 'surrogate_key_logging.config' do |app|
@@ -29,6 +30,7 @@ module SurrogateKeyLogging
         config.key_for ||= -> (value) { "#{config.key_prefix}#{SecureRandom.uuid}" }
         config.cache = true unless config.key?(:cache)
         config.cache_key_for ||= -> (value) { value }
+        config.key_ttl ||= 90.days
       end
     end
 

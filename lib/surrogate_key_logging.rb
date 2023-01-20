@@ -60,14 +60,14 @@ module SurrogateKeyLogging
       parameter_filter.filter params
     end
 
-    def add_param_to_filter(attr, parent = nil)
-      if parent.nil?
+    def add_param_to_filter(attr, *parents)
+      if parents.empty?
         surrogate_attributes attr.to_s
       else
         surrogate_attributes(
-          "#{parent}.#{attr}",
-          "#{parent}[#{attr}]",
-          "[#{parent}][#{attr}]"
+          "#{parents.join('.')}.#{attr}",
+          "#{parents.first}#{parents[1..-1].map{|x|"[#{x}]"}.join('')}[#{attr}]",
+          "#{parents.map{|x|"[#{x}]"}.join('')}[#{attr}]"
         )
       end
     end

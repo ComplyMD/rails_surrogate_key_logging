@@ -49,7 +49,11 @@ module SurrogateKeyLogging
     end
 
     def parameter_filter
-      @parameter_filter ||= ::ActiveSupport::ParameterFilter.new(surrogate_attributes, mask: key_manager)
+      @parameter_filter ||= filter_for_attributes(surrogate_attributes)
+    end
+
+    def filter_for_attributes(attrs)
+      ::ActiveSupport::ParameterFilter.new(attrs, mask: key_manager)
     end
 
     def key_store

@@ -7,13 +7,9 @@ module SurrogateKeyLogging
     module Attributes
       extend ActiveSupport::Concern
 
-      included do
-        surrogate_parent_names model_name.singular, model_name.plural
-      end
-
       class_methods do
         def surrogate_parent_names(*names)
-          @surrogate_parent_names ||= []
+          @surrogate_parent_names ||= [model_name.singular, model_name.plural]
           names.each do |name|
             @surrogate_parent_names << name.to_sym
             surrogate_attributes.each do |attr|

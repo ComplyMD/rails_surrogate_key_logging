@@ -49,11 +49,5 @@ module SurrogateKeyLogging
       end
     end
 
-    initializer 'surrogate_key_logging.middleware' do
-      if SurrogateKeyLogging.config.enabled
-        Rails.application.config.middleware.insert_before 0, Middleware
-      end
-    end
-
   end
 end

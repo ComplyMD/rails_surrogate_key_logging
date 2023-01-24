@@ -8,11 +8,11 @@ module SurrogateKeyLogging
       end
 
       def value_for_surrogate(surrogate)
-        where(key: surrogate).first&.value
+        where(key: surrogate).select(:value).first&.value
       end
 
       def surrogate_for_value(value)
-        where(hashed_value: hash_value(value)).first&.key
+        where(hashed_value: hash_value(value)).select(:key).first&.key
       end
 
       def add(surrogate, value)

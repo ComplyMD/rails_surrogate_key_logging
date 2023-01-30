@@ -18,8 +18,8 @@ module SurrogateKeyLogging
     end
 
     rake_tasks do
-      load 'tasks/surrogate_key_logging.rake'
-      load 'tasks/key_store/active_record.rake'
+      # load 'tasks/surrogate_key_logging.rake'
+      # load 'tasks/key_store/active_record.rake'
     end
 
     initializer 'surrogate_key_logging.config' do |app|

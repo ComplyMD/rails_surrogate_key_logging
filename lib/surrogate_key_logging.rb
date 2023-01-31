@@ -64,6 +64,10 @@ module SurrogateKeyLogging
       parameter_filter.filter params
     end
 
+    def surrogate_for(value)
+      key_manager.get(value)
+    end
+
     def add_param_to_filter(attr, *parents)
       if parents.empty?
         surrogate_attributes attr.to_s

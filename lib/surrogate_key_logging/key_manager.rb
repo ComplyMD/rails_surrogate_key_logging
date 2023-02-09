@@ -15,6 +15,7 @@ module SurrogateKeyLogging
     end
 
     def get(value)
+      return if value.blank?
       if should_cache
         get_cached(value)
       else

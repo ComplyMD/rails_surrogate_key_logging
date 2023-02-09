@@ -4,7 +4,7 @@ module SurrogateKeyLogging
   class Surrogate < ApplicationRecord
     class << self
       def hash_value(value)
-        Digest::SHA512.hexdigest value
+        Digest::SHA512.hexdigest value.to_s
       end
 
       def value_for_surrogate(surrogate)

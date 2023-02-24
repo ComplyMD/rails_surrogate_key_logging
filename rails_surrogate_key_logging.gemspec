@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
     'rubygems_mfa_required' => 'true',
   }
 
-  s.files = Dir['lib/**/*', 'README.md', 'MIT-LICENSE', 'rails_surrogate_key_logging.gemspec']
+  s.files = Dir['app/**/*', 'lib/**/*', 'README.md', 'MIT-LICENSE', 'rails_surrogate_key_logging.gemspec']
 
   s.require_paths = %w[ lib ]
 

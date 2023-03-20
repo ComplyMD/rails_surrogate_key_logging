@@ -36,6 +36,7 @@ module SurrogateKeyLogging
     end
     
     def call(_key, value, _parents = [], _original_params = nil)
+      return "" if value.blank?
       surrogate = get(value)
       Rails.logger.tagged('SurrogateKeyLogging') { Rails.logger.info "Surrogate: `#{surrogate}`, value: `#{value}`" } if SurrogateKeyLogging.config.debug
       surrogate

@@ -27,8 +27,8 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.7.0'
 
-  s.add_dependency('actionpack', '>= 6.0.0', '< 7.0.0')
-  s.add_dependency('activerecord', '>= 6.0.0', '< 7.0.0')
-  s.add_dependency('activesupport', '>= 6.0.0', '< 7.0.0')
-  s.add_dependency('railties', '>= 6.0.0', '< 7.0.0')
+  s.add_dependency('actionpack', '>= 6.0.0', '< 8.0.0')
+  s.add_dependency('activerecord', '>= 6.0.0', '< 8.0.0')
+  s.add_dependency('activesupport', '>= 6.0.0', '< 8.0.0')
+  s.add_dependency('railties', '>= 6.0.0', '< 8.0.0')
 end

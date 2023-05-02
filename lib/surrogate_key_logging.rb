@@ -12,11 +12,13 @@ module SurrogateKeyLogging
   autoload :ActiveRecord
   autoload :Config, 'surrogate_key_logging/configuration'
   autoload :Configuration
+  autoload :Engine
   autoload :KeyManager
   autoload :KeyStore
   autoload :Middleware
-  autoload :Engine
   autoload :Version
+
+  require 'surrogate_key_logging/sidekiq' if defined?(::Sidekiq)
 
   @config = Config.new
 

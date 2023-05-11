@@ -16,8 +16,13 @@ module SurrogateKeyLogging
       end
 
       def add(surrogate, value)
-        s = new(key: surrogate, value: value, hashed_value: hash_value(value))
-        s.save
+        begin
+          s = new(key: surrogate, value: value, hashed_value: hash_value(value))
+          s.save
+        rescue => e
+          Rails.logger.tagged('SurrogateKeyLogging') { Rails.logger.error "Surrogate creation failed for: `#{surrogate}`, value: `#{value}`" } if SurrogateKeyLogging.config.debug
+          Rails.logger.tagged('SurrogateKeyLogging') { Rails.logger.error "Exception on surrogate info creation: `#{e.message}`" }
+        end
       end
 
       def use(surrogate)

@@ -5,7 +5,7 @@ module SurrogateKeyLogging
 
     class ActiveRecord < Base
 
-      attr_reader :model
+      attr_reader :model, :key_for
 
       def initialize
         if SurrogateKeyLogging.config.key?(:model) && SurrogateKeyLogging.config.model.present?
@@ -14,24 +14,16 @@ module SurrogateKeyLogging
         else
           @model = SurrogateKeyLogging::Surrogate
         end
+        @key_for = SurrogateKeyLogging.config.key_for
       end
 
-      def surrogate_for_value(value)
-        key = model.surrogate_for_value(value)
-        use(key)
-        key
-      end
-
-      def value_for_surrogate(surrogate)
-        model.value_for_surrogate(surrogate)
-      end
-
-      def save(surrogate, value)
-        model.add(surrogate, value)
-      end
-
-      def use(surrogate)
-        model.use(surrogate)
+      def get(value)
+        _get = -> { model.find_or_create_surrogate_for_value(value, key_for) }
+        if SurrogateKeyLogging.config.debug
+          _get.call
+        else
+          ::ActiveRecord::Base.logger.silence { _get.call }
+        end
       end
 
     end

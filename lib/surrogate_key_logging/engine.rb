@@ -34,6 +34,10 @@ module SurrogateKeyLogging
       end
     end
 
+    initializer 'surrogate_key_logging.middleware' do |app|
+      app.middleware.insert_before(0, Middleware)
+    end
+
     initializer 'surrogate_key_logging.filter_parameters' do
       if SurrogateKeyLogging.config.enabled
       end

@@ -28,13 +28,9 @@ module SurrogateKeyLogging
     end
 
     def get_non_cached(value)
-      stored = key_store.surrogate_for_value(value)
-      return stored if stored.present?
-      surrogate = key_for.call(value)
-      key_store.save(surrogate, value)
-      surrogate
+      key_store.get(value)
     end
-    
+
     def call(_key, value, _parents = [], _original_params = nil)
       return "" if value.blank?
       surrogate = get(value)

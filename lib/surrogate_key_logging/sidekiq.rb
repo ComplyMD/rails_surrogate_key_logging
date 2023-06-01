@@ -29,6 +29,7 @@ if defined?(::Sidekiq)
                 hash['args'][param.last] = job_hash['args'][i]
               end
               hash['args'] = SurrogateKeyLogging.filter_for_attributes(klass.surrogate_params).filter(hash['args'])
+            rescue NameError # TODO: Add support for Sidekiq::Extensions::DelayedMailer (ApplicationMailer.delay.some_mail) and Sidekiq::Extensions::Delayed (SomeClass.delay.some_method)
             end
           end
           hash

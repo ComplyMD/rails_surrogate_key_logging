@@ -2,7 +2,7 @@
 
 module SurrogateKeyLogging
   module ActiveRecord
-    extend ActiveSupport::Autoload
+    extend ::ActiveSupport::Autoload
 
     autoload :Attributes
     autoload :LogSubscriber

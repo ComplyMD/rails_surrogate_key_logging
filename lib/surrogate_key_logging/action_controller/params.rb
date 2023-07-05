@@ -5,11 +5,11 @@ require 'active_support/concern'
 module SurrogateKeyLogging
   module ActionController
     module Params
-      extend ActiveSupport::Concern
+      extend ::ActiveSupport::Concern
 
       class_methods do
         def surrogate_params(*params, action: '*')
-          @surrogate_params ||= ActiveSupport::HashWithIndifferentAccess.new {|h,k| h[k] = [] }
+          @surrogate_params ||= ::ActiveSupport::HashWithIndifferentAccess.new {|h,k| h[k] = [] }
           params.each do |param|
             param = param.to_s
             @surrogate_params[action] << param

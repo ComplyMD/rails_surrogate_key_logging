@@ -4,7 +4,7 @@ require 'active_support'
 
 # Container Module
 module SurrogateKeyLogging
-  extend ActiveSupport::Autoload
+  extend ::ActiveSupport::Autoload
 
   autoload :ActionController
   autoload :ActionDispatch
@@ -55,7 +55,7 @@ module SurrogateKeyLogging
     end
 
     def filter_for_attributes(attrs)
-      config.enabled ? ::ActiveSupport::ParameterFilter.new(attrs, mask: key_manager) : attrs
+      ::ActiveSupport::ParameterFilter.new(config.enabled ? attrs : [], mask: key_manager)
     end
 
     def key_store
@@ -63,7 +63,7 @@ module SurrogateKeyLogging
     end
 
     def filter_parameters(params)
-      config.enabled ? parameter_filter.filter(params) : params
+      parameter_filter.filter(params)
     end
 
     def surrogate_for(value)
@@ -84,6 +84,8 @@ module SurrogateKeyLogging
 
   end
 
+  require 'active_support/parameter_filter'
+  ::ActiveSupport::ParameterFilter::CompiledFilter.send(:prepend, ActiveSupport)
   KeyStore.eager_load!
   ::Rails::Application::Configuration.send(:include, Configuration)
   require 'surrogate_key_logging/engine'

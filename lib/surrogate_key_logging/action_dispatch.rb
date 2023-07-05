@@ -2,7 +2,7 @@
 
 module SurrogateKeyLogging
   module ActionDispatch
-    extend ActiveSupport::Autoload
+    extend ::ActiveSupport::Autoload
 
     autoload :ParamsFilter
     autoload :QueryStringFilter

@@ -5,7 +5,7 @@ require 'active_support/concern'
 module SurrogateKeyLogging
   module ActiveRecord
     module Attributes
-      extend ActiveSupport::Concern
+      extend ::ActiveSupport::Concern
 
       class_methods do
         def surrogate_parent_names(*names)

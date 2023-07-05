@@ -2,7 +2,7 @@
 
 module SurrogateKeyLogging
   module ActionController
-    extend ActiveSupport::Autoload
+    extend ::ActiveSupport::Autoload
 
     autoload :LogSubscriber
 

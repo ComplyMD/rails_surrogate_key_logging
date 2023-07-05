@@ -2,7 +2,7 @@
 
 module SurrogateKeyLogging
   module KeyStore
-    extend ActiveSupport::Autoload
+    extend ::ActiveSupport::Autoload
 
     eager_autoload do
       autoload :Base

@@ -41,7 +41,7 @@ module SurrogateKeyLogging
     def reset
       reset! if config.cache
     end
-    
+
     def reset!
       @key_manager = @parameter_filter = nil
     end
@@ -55,7 +55,7 @@ module SurrogateKeyLogging
     end
 
     def filter_for_attributes(attrs)
-      ::ActiveSupport::ParameterFilter.new(attrs, mask: key_manager)
+      config.enabled ? ::ActiveSupport::ParameterFilter.new(attrs, mask: key_manager) : attrs
     end
 
     def key_store
@@ -63,11 +63,11 @@ module SurrogateKeyLogging
     end
 
     def filter_parameters(params)
-      parameter_filter.filter params
+      config.enabled ? parameter_filter.filter(params) : params
     end
 
     def surrogate_for(value)
-      key_manager.get(value)
+      config.enabled ? key_manager.get(value) : value
     end
 
     def add_param_to_filter(attr, *parents)

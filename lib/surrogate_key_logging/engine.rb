@@ -17,11 +17,6 @@ module SurrogateKeyLogging
       g.templates.unshift File.expand_path('lib/templates', root)
     end
 
-    rake_tasks do
-      # load 'tasks/surrogate_key_logging.rake'
-      # load 'tasks/key_store/active_record.rake'
-    end
-
     initializer 'surrogate_key_logging.config' do |app|
       SurrogateKeyLogging.configure do |config|
         config.enabled = Rails.env.production? unless config.key?(:enabled)
@@ -35,7 +30,9 @@ module SurrogateKeyLogging
     end
 
     initializer 'surrogate_key_logging.middleware' do |app|
-      app.middleware.insert_before(0, Middleware)
+      if SurrogateKeyLogging.config.enabled
+        app.middleware.insert_before(0, Middleware)
+      end
     end
 
     initializer 'surrogate_key_logging.filter_parameters' do
@@ -50,6 +47,16 @@ module SurrogateKeyLogging
         ::ActiveSupport::LogSubscriber.detach_from(:action_controller)
         ::SurrogateKeyLogging::ActionController::LogSubscriber.attach_to(:action_controller)
         ::ActionDispatch::Request.include SurrogateKeyLogging::ActionDispatch::Request
+      end
+    end
+
+    initializer 'surrogate_key_logging.sidekiq' do
+      if SurrogateKeyLogging.config.enabled && defined?(::Sidekiq)
+        Sidekiq.configure_server do |config|
+          config.server_middleware do |chain|
+            chain.prepend SurrogateKeyLogging::SidekiqMiddleware
+          end
+        end
       end
     end
 

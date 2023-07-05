@@ -39,3 +39,14 @@ if defined?(::Sidekiq)
 
   end
 end
+
+module SurrogateKeyLogging
+  class SidekiqMiddleware
+
+    def call(env)
+      yield
+      SurrogateKeyLogging.reset
+    end
+
+  end
+end

@@ -43,7 +43,7 @@ end
 module SurrogateKeyLogging
   class SidekiqMiddleware
 
-    def call(env)
+    def call(*_)
       yield
       SurrogateKeyLogging.reset
     end

@@ -10,6 +10,7 @@ namespace :skl do
 
       namespace :clear do
         task stale: :environment do
+          return unless SurrogateKeyLogging.config.enabled
           if SurrogateKeyLogging.config.key_ttl > 0
             SurrogateKeyLogging.key_store.model.where('updated_at < ?', Time.now - SurrogateKeyLogging.config.key_ttl).destroy_all
           else

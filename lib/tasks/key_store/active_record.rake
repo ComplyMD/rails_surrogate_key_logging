@@ -10,14 +10,14 @@ namespace :skl do
 
       namespace :clear do
         task stale: :environment do
-          if !SurrogateKeyLogging.config.enabled
+          if SurrogateKeyLogging.config.enabled
+            if SurrogateKeyLogging.config.key_ttl > 0
+              SurrogateKeyLogging.key_store.model.where('updated_at < ?', Time.now - SurrogateKeyLogging.config.key_ttl).destroy_all
+            else
+              puts "SurrogateKeyLogging config.key_ttl is set to 0, which makes keys never go stale."
+            end
+          else 
             puts "SurrogateKeyLogging config.enabled is set to false, skipping cleanup."
-            return
-          end  
-          if SurrogateKeyLogging.config.key_ttl > 0
-            SurrogateKeyLogging.key_store.model.where('updated_at < ?', Time.now - SurrogateKeyLogging.config.key_ttl).destroy_all
-          else
-            puts "SurrogateKeyLogging config.key_ttl is set to 0, which makes keys never go stale."
           end
         end
       end

@@ -16,7 +16,6 @@ if defined?(::Sidekiq)
 
     if defined?(JobLogger)
       class JobLogger
-        alias_method :job_hash_context__before_surrogate_key_logging, :job_hash_context
         def job_hash_context(job_hash)
           hash = job_hash_context__before_surrogate_key_logging(job_hash).stringify_keys
           hash['args'] = {}
@@ -34,6 +33,7 @@ if defined?(::Sidekiq)
           end
           hash
         end
+        alias_method :job_hash_context__before_surrogate_key_logging, :job_hash_context
       end
     end
 

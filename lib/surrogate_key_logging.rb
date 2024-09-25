@@ -85,7 +85,6 @@ module SurrogateKeyLogging
   end
 
   require 'active_support/parameter_filter'
-  # ::ActiveSupport::ParameterFilter::CompiledFilter.send(:prepend, ActiveSupport)
   KeyStore.eager_load!
   ::Rails::Application::Configuration.send(:include, Configuration)
   require 'surrogate_key_logging/engine'

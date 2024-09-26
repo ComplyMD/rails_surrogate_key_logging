@@ -10,7 +10,6 @@
   ).inject({}) do |memo, conf|
     k, v = conf
     memo[k.sub(Regexp.new("^surrogate_key_logging_"),'')] = v if k.starts_with?("surrogate_key_logging_")
-    memo[k]['uses_transactions'] = false
     memo
   end.to_yaml
 %>

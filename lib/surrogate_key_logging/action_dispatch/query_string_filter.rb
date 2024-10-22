@@ -11,7 +11,7 @@ module SurrogateKeyLogging
       end
 
       attr_reader :qs, :req
-      
+
       def initialize(qs, req = nil)
         @qs = qs
         @req = req
@@ -24,11 +24,11 @@ module SurrogateKeyLogging
           {}
         end
       end
-  
+
       def controller_class
         @controller_class = req.controller_class_for(path_params[:controller])
       end
-  
+
       def filterable_params
         @filterable_params ||= if controller_class.respond_to?(:surrogate_params)
           surrogate_params = controller_class.surrogate_params
@@ -40,7 +40,7 @@ module SurrogateKeyLogging
 
       def params_filter
         return @params_filter if @params_filter
-        attrs = SurrogateKeyLogging.parameter_filter.instance_variable_get(:@filters).dup
+        attrs = SurrogateKeyLogging.parameter_filter.instance_variable_get(:@filters).dup || []
         attrs += filterable_params
         @params_filter = SurrogateKeyLogging.filter_for_attributes(attrs)
       end

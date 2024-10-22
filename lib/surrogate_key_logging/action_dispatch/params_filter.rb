@@ -11,7 +11,7 @@ module SurrogateKeyLogging
       end
 
       attr_reader :params, :req
-      
+
       def initialize(params, req = nil)
         @params = params
         @req = req
@@ -28,7 +28,7 @@ module SurrogateKeyLogging
 
       def params_filter
         return @params_filter if @params_filter
-        attrs = SurrogateKeyLogging.parameter_filter.instance_variable_get(:@filters).dup
+        attrs = SurrogateKeyLogging.parameter_filter.instance_variable_get(:@filters).dup || []
         attrs += filterable_params
         @params_filter = SurrogateKeyLogging.filter_for_attributes(attrs)
       end

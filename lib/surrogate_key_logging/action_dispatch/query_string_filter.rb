@@ -46,7 +46,7 @@ module SurrogateKeyLogging
       end
 
       def filtered
-        @filtered ||= qs.gsub(::ActionDispatch::Request::PAIR_RE) do |_|
+        @filtered ||= qs.gsub(%r{(#{"[^&;=]+"})=(#{"[^&;=]+"})}) do |_|
           params_filter.filter(::Regexp.last_match(1) => ::Regexp.last_match(2)).first.join('=')
         end
       end

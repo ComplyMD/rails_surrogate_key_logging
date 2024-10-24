@@ -5,7 +5,7 @@ module SurrogateKeyLogging
     class LogSubscriber < ::ActiveRecord::LogSubscriber
 
       def sql(event) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-        self.class.runtime += event.duration
+        ActiveSupport::Notifications.instrument("sql.active_record", duration: event.duration)
         return unless logger.debug?
 
         payload = event.payload

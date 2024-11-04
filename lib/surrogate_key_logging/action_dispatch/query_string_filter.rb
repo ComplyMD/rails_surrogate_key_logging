@@ -11,7 +11,7 @@ module SurrogateKeyLogging
       end
 
       attr_reader :qs, :req
-      
+
       def initialize(qs, req = nil)
         @qs = qs
         @req = req
@@ -24,11 +24,11 @@ module SurrogateKeyLogging
           {}
         end
       end
-  
+
       def controller_class
         @controller_class = req.controller_class_for(path_params[:controller])
       end
-  
+
       def filterable_params
         @filterable_params ||= if controller_class.respond_to?(:surrogate_params)
           surrogate_params = controller_class.surrogate_params
@@ -46,8 +46,17 @@ module SurrogateKeyLogging
       end
 
       def filtered
-        @filtered ||= qs.gsub(::ActionDispatch::Request::PAIR_RE) do |_|
-          params_filter.filter(::Regexp.last_match(1) => ::Regexp.last_match(2)).first.join('=')
+        @filtered ||= begin
+          parts = qs.split(/([&;])/)
+          filtered_parts = parts.map do |part|
+            if part.include?("=")
+              key, value = part.split("=", 2)
+              params_filter.filter(key => value).first.join("=")
+            else
+              part
+            end
+          end
+          filtered_parts.join("")
         end
       end
 

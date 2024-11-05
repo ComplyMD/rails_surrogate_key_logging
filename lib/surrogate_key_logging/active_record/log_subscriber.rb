@@ -5,7 +5,7 @@ module SurrogateKeyLogging
     class LogSubscriber < ::ActiveRecord::LogSubscriber
 
       def sql(event) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-        self.class.runtime += event.duration
+        ActiveSupport::Notifications.instrument("sql.active_record", duration: event.duration)
         return unless logger.debug?
 
         payload = event.payload
@@ -35,7 +35,7 @@ module SurrogateKeyLogging
         end
 
         name = colorize_payload_name(name, payload[:name])
-        sql  = color(sql, sql_color(sql), true) if colorize_logging
+        sql  = color(sql, sql_color(sql), bold: true) if colorize_logging
 
         debug "  #{name}  #{sql}#{binds}"
       end

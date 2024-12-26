@@ -31,4 +31,5 @@ Gem::Specification.new do |s|
   s.add_dependency('activerecord', '>= 6.0.0', '< 8.0.0')
   s.add_dependency('activesupport', '>= 6.0.0', '< 8.0.0')
   s.add_dependency('railties', '>= 6.0.0', '< 8.0.0')
+  s.add_dependency('sidekiq', '>= 6.4.1')
 end

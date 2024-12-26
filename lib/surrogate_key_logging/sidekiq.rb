@@ -13,39 +13,35 @@ if defined?(::Sidekiq)
         end
       end
     end
-
-    if defined?(JobLogger)
-      class JobLogger
-        alias_method :job_hash_context__before_surrogate_key_logging, :job_hash_context
-        def job_hash_context(job_hash)
-          hash = job_hash_context__before_surrogate_key_logging(job_hash).stringify_keys
-          hash['args'] = {}
-          if job_hash.key?('args')
-            begin
-              klass = hash['class'].constantize
-              perform = klass.instance_method(:perform)
-              params = perform.parameters
-              params.each_with_index do |param, i|
-                hash['args'][param.last] = job_hash['args'][i]
-              end
-              hash['args'] = SurrogateKeyLogging.filter_for_attributes(klass.surrogate_params).filter(hash['args'])
-            rescue NameError # TODO: Add support for Sidekiq::Extensions::DelayedMailer (ApplicationMailer.delay.some_mail) and Sidekiq::Extensions::Delayed (SomeClass.delay.some_method)
-            end
-          end
-          hash
-        end
-      end
-    end
-
   end
 end
 
 module SurrogateKeyLogging
   class SidekiqMiddleware
+    include Sidekiq::ServerMiddleware
 
-    def call(*_)
-      yield
+    def call(instance, job_hash, queue, &block)
+      ::Sidekiq::Context.with(context_for(job_hash), &block)
       SurrogateKeyLogging.reset
+    end
+
+    def context_for(job_hash)
+      hash = job_hash.stringify_keys
+      hash['args'] = {}
+
+      if job_hash.key?('args')
+        begin
+          klass = hash['class'].constantize
+          perform = klass.instance_method(:perform)
+          params = perform.parameters
+          params.each_with_index do |param, i|
+            hash['args'][param.last] = job_hash['args'][i]
+          end
+          hash['args'] = SurrogateKeyLogging.filter_for_attributes(klass.surrogate_params).filter(hash['args'])
+        rescue NameError # TODO: Add support for Sidekiq::Extensions::DelayedMailer (ApplicationMailer.delay.some_mail) and Sidekiq::Extensions::Delayed (SomeClass.delay.some_method)
+        end
+      end
+      hash
     end
 
   end

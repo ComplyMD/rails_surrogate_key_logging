@@ -24,3 +24,8 @@ group :development do
   gem 'pry-nav'
   gem 'pry-remote'
 end
+
+# Use a SQLite version that still supports Ruby 2.7 (1.6.x series). Avoid 1.7+ (Ruby >= 3.0)
+group :development, :test do
+  gem 'sqlite3', '~> 1.6.0'
+end

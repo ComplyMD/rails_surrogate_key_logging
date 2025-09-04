@@ -1,0 +1,20 @@
+# Example SQLite database configuration for rails_surrogate_key_logging engine
+# Copy to config/database.yml (or merge) inside a host app if you want to run
+# the engine's surrogate key store using SQLite.
+
+surrogate_key_logging_default: &surrogate_key_logging_default
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+  database: db/surrogate_key_logging.sqlite3
+
+surrogate_key_logging_development:
+  <<: *surrogate_key_logging_default
+
+surrogate_key_logging_test:
+  <<: *surrogate_key_logging_default
+  database: db/surrogate_key_logging_test.sqlite3
+
+surrogate_key_logging_production:
+  <<: *surrogate_key_logging_default
+  database: db/surrogate_key_logging_production.sqlite3

@@ -5,7 +5,20 @@ namespace :skl do
     namespace :active_record do |ar_ns|
 
       task clear: :environment do
-        ActiveRecord::Base.connection.truncate(SurrogateKeyLogging.key_store.model.table_name)
+        conn = ActiveRecord::Base.connection
+        table = SurrogateKeyLogging.key_store.model.table_name
+        adapter = conn.adapter_name.downcase
+
+        case adapter
+        when /mysql/, /maria/ then conn.execute("TRUNCATE TABLE #{conn.quote_table_name(table)}")
+        when /postgres/ then conn.execute("TRUNCATE TABLE #{conn.quote_table_name(table)} RESTART IDENTITY CASCADE")
+        else
+          # SQLite (and any other) fallback: delete all rows; for primary key reset, SQLite AUTOINCREMENT
+          # is reset by deleting sqlite_sequence entry if needed, but we use a string PK so just delete.
+          conn.execute("DELETE FROM #{conn.quote_table_name(table)}")
+          # Reclaim space in SQLite
+          conn.execute('VACUUM') if adapter.include?('sqlite')
+        end
       end
 
       namespace :clear do

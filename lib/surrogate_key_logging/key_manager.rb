@@ -39,5 +39,15 @@ module SurrogateKeyLogging
       surrogate
     end
 
+    # Ensure KeyManager instance shows meaningful representation when logged
+    def to_s
+      "[SurrogateKeyLogging::KeyManager cache_size=#{cache.size} enabled=#{SurrogateKeyLogging.config.enabled}]"
+    end
+
+    # Provide detailed inspection for debugging
+    def inspect
+      "#<#{self.class.name}:0x#{object_id.to_s(16)} cache_size=#{cache.size} should_cache=#{should_cache}>"
+    end
+
   end
 end

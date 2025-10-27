@@ -6,9 +6,11 @@ module SurrogateKeyLogging
     def value_for_key(key, value, parents = [], original_params = nil) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       parents.push(key) if deep_regexps
       if regexps.any? { |r| r.match?(key.to_s) }
-        value = @mask.respond_to?(:call) ? @mask.call(key, value, parents, original_params) : @mask
+        result = @mask.respond_to?(:call) ? @mask.call(key, value, parents, original_params) : @mask
+        value = result.respond_to?(:to_s) ? result.to_s : result
       elsif deep_regexps && (joined = parents.join('.')) && deep_regexps.any? { |r| r.match?(joined) } # rubocop:disable Lint/DuplicateBranch
-        value = @mask.respond_to?(:call) ? @mask.call(key, value, parents, original_params) : @mask
+        result = @mask.respond_to?(:call) ? @mask.call(key, value, parents, original_params) : @mask
+        value = result.respond_to?(:to_s) ? result.to_s : result
       elsif value.is_a?(Hash)
         value = call(value, parents, original_params)
       elsif value.is_a?(Array)
@@ -26,6 +28,6 @@ module SurrogateKeyLogging
       parents.pop if deep_regexps
       value
     end
-    
+
   end
 end

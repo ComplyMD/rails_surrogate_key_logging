@@ -12,6 +12,7 @@ module SurrogateKeyLogging
       @cache_key_for = SurrogateKeyLogging.config.cache_key_for
       @cache = {}
       @key_for = SurrogateKeyLogging.config.key_for
+      @last_surrogate = nil
     end
 
     def get(value)
@@ -35,18 +36,20 @@ module SurrogateKeyLogging
       return "" if value.blank?
       return value unless SurrogateKeyLogging.config.enabled
       surrogate = get(value)
+      @last_surrogate = surrogate # Track the most recent surrogate for to_s
       Rails.logger.tagged('SurrogateKeyLogging') { Rails.logger.info "Surrogate: `#{surrogate}`, value: `#{value}`" } if SurrogateKeyLogging.config.debug
       surrogate
     end
 
-    # Ensure KeyManager instance shows meaningful representation when logged
+    # Ensure KeyManager instance shows the actual surrogate value when logged
+    # This fixes Rails 7.1 behavior where the mask object itself gets logged
     def to_s
-      "[SurrogateKeyLogging::KeyManager cache_size=#{cache.size} enabled=#{SurrogateKeyLogging.config.enabled}]"
+      @last_surrogate&.to_s || "[FILTERED]"
     end
 
     # Provide detailed inspection for debugging
     def inspect
-      "#<#{self.class.name}:0x#{object_id.to_s(16)} cache_size=#{cache.size} should_cache=#{should_cache}>"
+      "#<#{self.class.name}:0x#{object_id.to_s(16)} cache_size=#{cache.size} should_cache=#{should_cache} last_surrogate=#{@last_surrogate}>"
     end
 
   end

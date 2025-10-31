@@ -26,17 +26,5 @@ module SurrogateKeyLogging
       end
 
     end
-
-    # Ensure Surrogate instance shows the key when logged as a string
-    def to_s
-      key.to_s
-    end
-
-    # Provide detailed inspection for debugging
-    def inspect
-      value_preview = value.to_s.length > 50 ? "#{value.to_s[0..47]}..." : value.to_s
-      "#<#{self.class.name} key=#{key.inspect} value=#{value_preview.inspect}>"
-    end
-
   end
 end

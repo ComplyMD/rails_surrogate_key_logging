@@ -54,8 +54,14 @@ module SurrogateKeyLogging
       @parameter_filter ||= filter_for_attributes(surrogate_attributes)
     end
 
+    #Rails 6 and 7 compatible
+    #Rails 6 would accept a string, lambda/proc, or object that responds to call
+    #Rails 7.1 requires a lambda/proc for dynamic masking
     def filter_for_attributes(attrs)
-      ::ActiveSupport::ParameterFilter.new(config.enabled ? attrs : [], mask: key_manager)
+      ::ActiveSupport::ParameterFilter.new(
+        SurrogateKeyLogging.config.enabled ? attrs : [],
+        mask: ->(key, value, *args) { key_manager.call(key, value, *args) }
+      )
     end
 
     def key_store

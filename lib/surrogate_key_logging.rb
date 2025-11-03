@@ -17,6 +17,7 @@ module SurrogateKeyLogging
   autoload :KeyStore
   autoload :Middleware
   autoload :Version
+  autoload :CustomParameterFilter
 
   require 'surrogate_key_logging/sidekiq' if defined?(::Sidekiq)
 
@@ -54,22 +55,20 @@ module SurrogateKeyLogging
       @parameter_filter ||= filter_for_attributes(surrogate_attributes)
     end
 
-    #Rails 6 and 7 compatible
-    #Rails 6 would accept a string, lambda/proc, or object that responds to call
-    #Rails 7.1 requires a lambda/proc for dynamic masking
+    # Rails 6/7 Compatible Parameter Filtering
+    # 
+    # Rails 7.1 changed how ParameterFilter handles callable masks, causing surrogate
+    # objects to appear in logs instead of surrogate values. This implementation uses
+    # a custom recursive traversal approach that works consistently across Rails versions
+    # and supports all existing parameter format patterns from the README.
     def filter_for_attributes(attrs)
-      ::ActiveSupport::ParameterFilter.new(
-        SurrogateKeyLogging.config.enabled ?
-          [lambda { |key, value, *args|
-            # Only surrogate if key matches our attributes
-            if attrs.any? { |attr| key.to_s.match?(Regexp.new(attr.to_s.gsub('.', '\\.').gsub('*', '.*'))) }
-              key_manager.call(key, value, *args).to_s
-            else
-              value
-            end
-          }] :
-          []
-      )
+      if config.enabled
+        # Return a custom filter that handles all supported parameter patterns
+        CustomParameterFilter.new(attrs, key_manager)
+      else
+        # Return a no-op filter when disabled
+        ->(params) { params.dup }
+      end
     end
 
     def key_store
